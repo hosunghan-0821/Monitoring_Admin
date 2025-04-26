@@ -1,0 +1,51 @@
+
+
+
+
+# Build output
+/target/
+/build/
+
+# Eclipse, IntelliJ, VSCode
+.classpath
+.project
+.settings/
+*.iml
+.idea/
+/.vscode/
+
+# Maven Wrapper
+!/.mvn/wrapper/maven-wrapper.jar
+/.mvn/wrapper/maven-wrapper.properties
+/.mvn/wrapper/MavenWrapperDownloader.java
+
+# Gradle Wrapper
+/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.properties
+
+# Eclipse files
+*.metadata
+bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Application config
+*.env
+*.env.*.local

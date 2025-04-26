@@ -1,0 +1,31 @@
+.monitor-container {
+    overflow-x: auto;
+  }
+  .monitor-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  .monitor-header-row {
+    background-color: #f3f4f6;
+  }
+  .monitor-header-cell,
+  .monitor-cell {
+    padding: 1rem; /* 공간 확대 */
+    border: 1px solid #e5e7eb;
+    text-align: left;
+  }
+  .monitor-row-hover:hover {
+    background-color: #f9fafb;
+  }
+  .text-link {
+    color: #3b82f6;
+    text-decoration: none;
+  }
+  .text-link:hover {
+    text-decoration: underline;
+  }
+  .text-muted {
+    color: #9ca3af;
+  }
+  

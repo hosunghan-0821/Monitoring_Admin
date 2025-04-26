@@ -1,0 +1,17 @@
+/* 전체 HTML, body, #root에 높이 설정 */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* 최상위 컨테이너에 Flexbox 적용 */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 뷰포트 전체 높이를 최소 높이로 지정 */
+}
+
+/* 메인 콘텐츠 영역이 가변적으로 늘어나도록 설정 */
+.main-content {
+  flex: 1;
+}
