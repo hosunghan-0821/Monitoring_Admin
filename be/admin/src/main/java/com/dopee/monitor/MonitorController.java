@@ -1,12 +1,12 @@
-package dopee.monitor;
+package com.dopee.monitor;
 
+import com.dopee.monitor.dto.MonitorDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class MonitorController {
      * @return 모니터 DTO 목록
      */
     @GetMapping
-    public List<Objects> getAllMonitors() {
+    public List<MonitorDto> getAllMonitors() {
         return monitorService.getAllMonitors();
     }
 

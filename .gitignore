@@ -49,3 +49,7 @@ desktop.ini
 # Application config
 *.env
 *.env.*.local
+
+
+application-dev.properties
+application.properties

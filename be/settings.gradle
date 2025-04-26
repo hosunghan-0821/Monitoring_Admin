@@ -1,7 +1,6 @@
 rootProject.name = 'be_admin'
 include ':admin'
-
-
-
-
-
+include 'modules:chrome'
+include 'modules:s3'
+include 'modules:database'
+include 'modules:discord'
