@@ -1,14 +1,39 @@
 // Crawl.jsx
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import CrawlingTable from '../components/CrawlingTable';
 
 function Crawl() {
-  // 예시 데이터
-  const monitorData = [
-    { name: 'CPU Usage', status: 'Running', interval: '5분', historyLink: '/history/cpu' },
-    { name: 'Memory', status: 'Stopped', interval: '10분' },
-    { name: 'Disk I/O', status: 'Running', interval: '1시간', historyLink: '/history/disk' }
-  ];
+
+    // 1) 데이터를 담을 state
+    const [monitorData, setMonitorData] = useState([]);
+    const [loading, setLoading]   = useState(true);
+    const [error, setError]       = useState(null);
+
+    // 2) 컴포넌트 마운트 시 API 호출
+    useEffect(() => {
+      const fetchMonitor = async () => {
+        try {
+          const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/monitors`); 
+          console.log(res);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          console.log(data);
+          setMonitorData(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchMonitor();
+    }, monitorData);
+
+    // 3) 로딩·에러 상태 처리
+    if (loading) return <p>Loading…</p>;
+    if (error)   return <p style={{ color: 'red' }}>Error: {error}</p>;
+
 
   return (
     <div className="home-page">

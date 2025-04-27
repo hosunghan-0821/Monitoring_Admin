@@ -3,6 +3,7 @@
   }
   .monitor-table {
     width: 100%;
+    table-layout: fixed;        /* enforce equal column widths */
     border-collapse: collapse;
     margin-top: 1rem;
   }

@@ -1,0 +1,58 @@
+/* Login.css */
+.login-page {
+    min-height: 100vh;               /* 화면 전체 높이 */
+    display: flex;
+    justify-content: center;         /* 가로 가운데 */
+    align-items: center;             /* 세로 가운데 */
+    background: linear-gradient(
+      135deg,
+      #f0f4f8 0%,
+      #d9e2ec 100%
+    );
+  }
+  
+  .login-card {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    text-align: center;
+  }
+  
+  .login-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: #333333;
+  }
+  
+  .login-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .login-input:focus {
+    border-color: #3b82f6;
+    outline: none;
+  }
+  
+  .login-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #2563eb;
+  }

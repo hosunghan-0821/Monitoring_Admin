@@ -12,7 +12,7 @@ const CrawlingTable = ({ data }) => (
         <tr className="monitor-header-row">
           <th className="monitor-header-cell">모니터 이름</th>
           <th className="monitor-header-cell">상태</th>
-          <th className="monitor-header-cell">모니터 주기</th>
+          <th className="monitor-header-cell">모니터 주기(분)</th>
           <th className="monitor-header-cell">History</th>
         </tr>
       </thead>
