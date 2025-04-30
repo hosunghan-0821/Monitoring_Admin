@@ -7,8 +7,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 
+    //retry, aop
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
+
+
+    //spirng security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
 }
 
