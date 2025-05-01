@@ -24,5 +24,4 @@ public class MonitorController {
     public List<MonitorDto> getAllMonitors() {
         return monitorService.getAllMonitors();
     }
-
 }

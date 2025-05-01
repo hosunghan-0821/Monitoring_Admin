@@ -2,8 +2,10 @@ package com.dopee.security;
 
 import com.dopee.security.dto.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +13,10 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,10 +25,12 @@ import java.util.Collections;
 
 public class UserLoginFilter extends UsernamePasswordAuthenticationFilter {
 
-    public UserLoginFilter(AuthenticationManager authManager) {
+    private final HttpSessionSecurityContextRepository securityContextRepository;
+
+    public UserLoginFilter(AuthenticationManager authManager, HttpSessionSecurityContextRepository securityContextRepository) {
         setAuthenticationManager(authManager);
-        // 기본 URL 대신 JSON 로그인 엔드포인트를 지정하려면
         setFilterProcessesUrl("/api/auth/login");
+        this.securityContextRepository = securityContextRepository;
     }
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -45,6 +52,28 @@ public class UserLoginFilter extends UsernamePasswordAuthenticationFilter {
                         Collections.emptyList()
                 );
         return this.getAuthenticationManager().authenticate(authToken);
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication authResult) throws IOException {
+
+        //세션 생성
+        HttpSession session = req.getSession();
+        if (session != null) {
+            session.setMaxInactiveInterval(60);
+        }
+
+        // 인증된 SecurityContext 를 SessionRepository 와 요청과 응답에 저장
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authResult);
+        securityContextRepository.saveContext(context, req, res);
+
+        res.setStatus(HttpStatus.OK.value());
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest req, HttpServletResponse res, AuthenticationException failed) throws IOException {
+        res.sendError(HttpStatus.UNAUTHORIZED.value(), "Authentication Failed");
     }
 
 }

@@ -29,49 +29,7 @@ import javax.sql.DataSource;
 @EntityScan(basePackages = {"module.database.entity"})
 @EnableJpaRepositories(
         basePackages = {"module.database"}
-//        entityManagerFactoryRef = "monitorEntityManagerFactory",
-//        transactionManagerRef = "monitorTransactionManager"
 )
 @RequiredArgsConstructor
 public class JpaConfig {
-
-//    private final DbConfigProperties dbConfigProperties; // 의존성 주입받아 getter로 값을 받아옴
-
-//    @Bean
-//    public DataSource dataSource() {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//        dataSource.setUsername(dbConfigProperties.getUsername());
-//        dataSource.setPassword(dbConfigProperties.getPassword());
-//        return dataSource;
-//    }
-//
-//    @Bean(name = "monitorEntityManagerFactory")
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
-//        // 1) EMF 빈 생성
-//        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
-//
-//        // 2) JDBC 설정
-//        emf.setDataSource(dataSource);
-//
-//        // 3) 엔티티 스캔 패키지
-//        emf.setPackagesToScan("module.database");
-//
-//        // 4) JPA 벤더 어댑터 설정 (Hibernate)
-//        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-//        vendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL8Dialect");
-//        emf.setJpaVendorAdapter(vendorAdapter);
-//
-//        // (선택) 프로바이더를 명시적으로 지정하고 싶다면
-//        // emf.setPersistenceProviderClass(org.hibernate.jpa.HibernatePersistenceProvider.class);
-//
-//        return emf;
-//    }
-//
-//    // TransactionManager 빈도 꼭 등록하세요
-//    @Bean(name = "monitorTransactionManager")
-//    public PlatformTransactionManager transactionManager(
-//            LocalContainerEntityManagerFactoryBean emf) {
-//        return new JpaTransactionManager(emf.getObject());
-//    }
-
 }

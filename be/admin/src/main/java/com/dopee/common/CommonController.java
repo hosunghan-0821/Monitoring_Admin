@@ -1,0 +1,58 @@
+package com.dopee.common;
+
+
+import com.dopee.security.SessionListener;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
+public class CommonController {
+
+    private final SessionRegistry sessionRegistry;
+
+    //TODO Session 확인용 API 제거 필요
+    @GetMapping("/session/check")
+    private ResponseEntity<?> check() {
+
+        Map<String, HttpSession> sessions = SessionListener.getSessions();
+        Map<String, Object> sessionData = new HashMap<>();
+        Map<String, Object> info = new HashMap<>();
+
+        for (Map.Entry<String, HttpSession> entry : sessions.entrySet()) {
+            String sessionId = entry.getKey();
+            HttpSession session = entry.getValue();
+            Object principal = session.getAttribute("SPRING_SECURITY_CONTEXT");
+            sessionData.put(sessionId, principal);
+
+            long lastAccessed = session.getLastAccessedTime();          // 마지막 접근 시각 (ms)
+            int maxInactive = session.getMaxInactiveInterval();       // 타임아웃 설정 (초)
+            long now = System.currentTimeMillis();
+
+            long elapsedSec = (now - lastAccessed) / 1000;             // 마지막 접근부터 경과된 시간
+            long remaining = maxInactive - elapsedSec;               // 남은 시간(초)
+
+            Map<String, Object> eachData = Map.of(
+                    "principal", principal != null ? principal : "null value",
+                    "sessionId", session.getId(),
+                    "lastAccessedTime", Instant.ofEpochMilli(lastAccessed).toString(),
+                    "maxInactiveInterval", maxInactive,
+                    "elapsedSeconds", elapsedSec,
+                    "remainingSeconds", Math.max(0, remaining)
+            );
+
+            info.put(sessionId, eachData);
+        }
+        return ResponseEntity.ok(info);
+    }
+}
