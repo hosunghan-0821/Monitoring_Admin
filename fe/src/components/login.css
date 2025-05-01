@@ -29,11 +29,21 @@
   .login-input {
     width: 100%;
     padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
+    /* 아래처럼 margin-top, margin-bottom 혹은 전체 margin을 지정하세요 */
+    margin: 1rem 0;         /* 위아래 1rem, 좌우 0 */
+    /* 또는 margin: 0.5rem 0.5rem; 처럼 네 방향을 다 줄 수도 있습니다 */
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     font-size: 1rem;
+    display: flex;
+    
   }
+
+  .login-input,
+  .login-button {
+    box-sizing: border-box;
+  }
+
   
   .login-input:focus {
     border-color: #3b82f6;
@@ -42,7 +52,7 @@
   
   .login-button {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     background-color: #3b82f6;
     color: #ffffff;
     border: none;

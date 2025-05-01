@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import './login.css';
 
 // 1) 검증 로직 분리
@@ -10,50 +11,45 @@ function validateCredentials(username, password) {
   return true;
 }
 
-function Login({ onLogin }) {
+function Login() {
     const [user, setUser] = useState('');
     const [pass, setPass] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError]     = useState(null);
+    const { login } = useAuth();               // 전역 login 액션
+
 
     const submit = async () => {
-
       if (!validateCredentials(user, pass)) {
         return; // 검증 실패 시 중단
       }
-
       setLoading(true);
-      setError(null);
-
       try {
-        
-        const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/login`, {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: user, password: pass }),
+          credentials: 'include'
         });
   
+        console.log(res);
+
         if (!res.ok) {
           // HTTP 에러 코드 처리
           const errMsg = await res.text();
           throw new Error(errMsg || `HTTP ${res.status}`);
         }
   
-        const result = await res.json();
-        // ② 로그인 성공 결과를 부모(onLogin)로 전달
-        onLogin(result);
-  
+        login();
       } catch (err) {
+        console.log(err);
         // 에러 메시지 상태에 저장 → 렌더링 시 표시
-        setError(err.message);
+        alert("로그인 실패")
       } finally {
         setLoading(false);
       }
     };
 
-    if(error) {
-      alert("로그인 실패")
-    }
+    
   
     return (
         <div className="login-page">

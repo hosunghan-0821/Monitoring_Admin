@@ -6,14 +6,13 @@ function Header() {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/">Dopee Admin</Link>
+        <Link to="/">Dopee</Link>
       </div>
       <nav className="nav">
         <ul>
-          <li><Link to="/">홈</Link></li>
-          <li><Link to="/crawl">크롤링 관리</Link></li>
-          <li><Link to="/about">소개</Link></li>
-          <li><Link to="/contact">연락처</Link></li>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/crawl">Crawl Management</Link></li>
+          <li><Link to="/about">Brand Products</Link></li>
         </ul>
       </nav>
     </header>
