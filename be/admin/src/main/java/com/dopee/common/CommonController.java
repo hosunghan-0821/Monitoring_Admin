@@ -2,9 +2,12 @@ package com.dopee.common;
 
 
 import com.dopee.security.SessionListener;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +23,22 @@ import java.util.Map;
 public class CommonController {
 
     private final SessionRegistry sessionRegistry;
+
+    //유효한 세션인지 체크하는 API
+    @GetMapping("/auth/session")
+    private ResponseEntity<?> validSession(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            SessionInformation sessionInformation = sessionRegistry.getSessionInformation(session.getId());
+            if (sessionInformation != null && !sessionInformation.isExpired()) {
+                return ResponseEntity.ok(null);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
 
     //TODO Session 확인용 API 제거 필요
     @GetMapping("/session/check")

@@ -5,7 +5,6 @@ import com.dopee.security.UserLoginProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.savedrequest.NullRequestCache;
@@ -46,7 +44,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager, AuthenticationEntryPoint loginAuthenticationEntryPoint, HttpSessionSecurityContextRepository securityContextRepository) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager, AuthenticationEntryPoint loginAuthenticationEntryPoint, HttpSessionSecurityContextRepository securityContextRepository, SessionRegistry sessionRegistry) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable);
         http.formLogin(AbstractHttpConfigurer::disable);
@@ -56,15 +54,16 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/session/check").permitAll() // sessions 확인용
+                        //TODO 로그아웃 API 추가
                         .anyRequest().authenticated()
                 );
 
-        //Rest API 형식이라 Redirect를 하기 위해 default로 저장해둘 필요가 없음
+        //Rest API 형식이라 Redirect를 하기 위해 default로 Cacheing 처리하면서 저장해둘 필요가 없음 -> 해당 cache때문에 불필요한 요청에 Session을 생성하게됨.
         http.requestCache(rc ->
                 rc.requestCache(new NullRequestCache())
         );
 
-        http.addFilterAt(new UserLoginFilter(authenticationManager, securityContextRepository), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new UserLoginFilter(authenticationManager, securityContextRepository,sessionRegistry), UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .maximumSessions(1)                      // 계정당 최대 1세션

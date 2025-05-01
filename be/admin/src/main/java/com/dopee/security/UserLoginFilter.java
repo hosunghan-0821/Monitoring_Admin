@@ -6,7 +6,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -15,9 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +26,13 @@ public class UserLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final HttpSessionSecurityContextRepository securityContextRepository;
 
-    public UserLoginFilter(AuthenticationManager authManager, HttpSessionSecurityContextRepository securityContextRepository) {
+    private final SessionRegistry sessionRegistry;
+
+    public UserLoginFilter(AuthenticationManager authManager, HttpSessionSecurityContextRepository securityContextRepository, SessionRegistry sessionRegistry) {
         setAuthenticationManager(authManager);
         setFilterProcessesUrl("/api/auth/login");
         this.securityContextRepository = securityContextRepository;
+        this.sessionRegistry = sessionRegistry;
     }
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -61,12 +63,14 @@ public class UserLoginFilter extends UsernamePasswordAuthenticationFilter {
         HttpSession session = req.getSession();
         if (session != null) {
             session.setMaxInactiveInterval(60);
+            sessionRegistry.registerNewSession(session.getId(), authResult.getPrincipal());
         }
 
         // 인증된 SecurityContext 를 SessionRepository 와 요청과 응답에 저장
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authResult);
         securityContextRepository.saveContext(context, req, res);
+
 
         res.setStatus(HttpStatus.OK.value());
     }
