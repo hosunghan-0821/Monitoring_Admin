@@ -49,28 +49,36 @@ function Login() {
       }
     };
 
+  // 폼 제출 핸들러
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submit();
+  };
     
   
     return (
         <div className="login-page">
           <div className="login-card">
             <h1 className="login-title">로그인</h1>
-            <input
-              className="login-input"
-              value={user}
-              onChange={e => setUser(e.target.value)}
-              placeholder="아이디"
-            />
-            <input
-              className="login-input"
-              type="password"
-              value={pass}
-              onChange={e => setPass(e.target.value)}
-              placeholder="비밀번호"
-            />
-            <button className="login-button" onClick={submit}>
-              로그인
-            </button>
+            <form onSubmit={handleSubmit}>
+              <input
+                className="login-input"
+                value={user}
+                onChange={e => setUser(e.target.value)}
+                placeholder="아이디"
+              />
+              <input
+                className="login-input"
+                type="password"
+                value={pass}
+                onChange={e => setPass(e.target.value)}
+                placeholder="비밀번호"
+              />
+              <button className="login-button" type="submit">
+                로그인
+              </button>
+            </form>
+    
           </div>
         </div>
       );

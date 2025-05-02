@@ -1,6 +1,5 @@
 // CrawlingTable.jsx
 import React from 'react';
-import PropTypes from 'prop-types';
 import './CrawlingTable.css';
 
 // 모니터 테이블 컴포넌트
