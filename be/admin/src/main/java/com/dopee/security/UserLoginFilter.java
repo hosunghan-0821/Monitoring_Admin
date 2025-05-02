@@ -62,7 +62,7 @@ public class UserLoginFilter extends UsernamePasswordAuthenticationFilter {
         //세션 생성
         HttpSession session = req.getSession();
         if (session != null) {
-            session.setMaxInactiveInterval(60);
+            session.setMaxInactiveInterval(60 * 30);
             sessionRegistry.registerNewSession(session.getId(), authResult.getPrincipal());
         }
 
