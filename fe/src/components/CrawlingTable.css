@@ -1,32 +1,64 @@
+/* CrawlingTable.css */
 .monitor-container {
-    overflow-x: auto;
-  }
-  .monitor-table {
-    width: 100%;
-    table-layout: fixed;        /* enforce equal column widths */
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-  .monitor-header-row {
-    background-color: #f3f4f6;
-  }
-  .monitor-header-cell,
-  .monitor-cell {
-    padding: 1rem; /* 공간 확대 */
-    border: 1px solid #e5e7eb;
-    text-align: left;
-  }
-  .monitor-row-hover:hover {
-    background-color: #f9fafb;
-  }
-  .text-link {
-    color: #3b82f6;
-    text-decoration: none;
-  }
-  .text-link:hover {
-    text-decoration: underline;
-  }
-  .text-muted {
-    color: #9ca3af;
-  }
-  
+  overflow-x: auto;
+  padding: 16px;
+}
+.monitor-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+}
+.monitor-header-row {
+  background-color: #f0f4f8;
+}
+.monitor-header-cell,
+.monitor-cell {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e6ed;
+  text-align: left;
+  font-size: 14px;
+}
+.monitor-row-hover:hover {
+  background-color: #f9fcff;
+}
+.monitor-input {
+  width: 100%;
+  max-width: 80px;
+  padding: 6px 10px;
+  border: 1px solid #ccd6df;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.monitor-input:focus {
+  border-color: #409eff;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+  outline: none;
+}
+.monitor-btn {
+  padding: 6px 12px;
+  background-color: #409eff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+.monitor-btn:hover {
+  background-color: #66b1ff;
+}
+.text-link {
+  color: #409eff;
+  text-decoration: none;
+  font-weight: 500;
+}
+.text-link:hover {
+  text-decoration: underline;
+}
+.text-muted {
+  color: #a0aec0;
+}

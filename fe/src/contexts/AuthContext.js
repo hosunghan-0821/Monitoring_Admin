@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect,useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
@@ -7,6 +7,7 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }) {
     const [isLoggedIn, setIsLoggedIn] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();     
 
     // 마운트 시 백엔드에 로그인 여부 확인
     useEffect(() => {
@@ -16,7 +17,7 @@ export function AuthProvider({ children }) {
       })
         .then(res => {
           setIsLoggedIn(res.ok);
-          navigate('/');
+          navigate(location.pathname, { replace: true });
         })
         .catch(() => {
           setIsLoggedIn(false);
