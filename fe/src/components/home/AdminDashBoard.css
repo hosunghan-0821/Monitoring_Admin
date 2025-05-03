@@ -1,14 +1,28 @@
 .dashboard {
-  padding: 1rem;
+  overflow-x: auto;
+  padding: 16px;
+
+  padding: var(--spacing-lg);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-light);
+  border-radius: var(--border-radius);
+}
+
+h2 {
+  font-size: 1.75rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
 }
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: calc(var(--spacing-lg) * 1.5);
 }
 
 .new-products h2 {
-  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
 }

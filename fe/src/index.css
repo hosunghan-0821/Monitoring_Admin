@@ -1,13 +1,38 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+:root {
+  /* 컬러 팔레트 */
+  --bg-page: #f5f7fa;
+  --bg-card: #ffffff;
+  --bg-hover: rgba(52, 152, 219, 0.05);
+  --text-primary: #2c3e50;
+  --text-secondary: #6c7a89;
+  --text-success: #27ae60;
+  --text-error: #c0392b;
+  --text-accent: #8e44ad;
+  --accent: #3498db;
+
+  /* 그림자 */
+  --shadow-light: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-strong: 0 8px 20px rgba(0, 0, 0, 0.12);
+
+  /* 모양 */
+  --border-radius: 0.75rem;
+
+  /* 여백 */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
 }

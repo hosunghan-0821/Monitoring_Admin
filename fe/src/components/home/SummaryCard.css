@@ -1,0 +1,48 @@
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.metrics-table th {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 2px solid #e0e0e0;
+  text-align: center;
+}
+
+.summary-row {
+  background: var(--bg-card);
+  transition: background-color 0.2s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.summary-row:hover {
+  background-color: var(--bg-hover);
+  box-shadow: var(--shadow-light);
+  transform: translateY(-2px);
+}
+
+.summary-cell {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.summary-brand {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.summary-total {
+  color: var(--text-primary);
+}
+.summary-success {
+  color: var(--text-success);
+}
+.summary-failure {
+  color: var(--text-error);
+}
+.summary-duration {
+  color: var(--text-accent);
+}

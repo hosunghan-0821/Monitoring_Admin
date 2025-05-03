@@ -7,6 +7,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
+
+  /* 아래 세 줄만 추가 */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 /* 로고 스타일 */
