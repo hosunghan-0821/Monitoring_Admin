@@ -1,5 +1,5 @@
-import React from 'react';
-import './ProductCard.css';
+import React from "react";
+import "./ProductCard.css";
 
 function ProductCard({ image, title, brand, price, quantity }) {
   return (

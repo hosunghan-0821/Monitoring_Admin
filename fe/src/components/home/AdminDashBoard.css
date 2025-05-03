@@ -1,0 +1,14 @@
+.dashboard {
+  padding: 1rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.new-products h2 {
+  margin-bottom: 0.5rem;
+}
