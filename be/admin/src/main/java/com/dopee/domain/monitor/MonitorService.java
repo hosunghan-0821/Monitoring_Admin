@@ -1,7 +1,7 @@
-package com.dopee.monitor;
+package com.dopee.domain.monitor;
 
 
-import com.dopee.monitor.dto.MonitorDto;
+import com.dopee.domain.monitor.dto.MonitorDto;
 import lombok.RequiredArgsConstructor;
 import module.database.entity.Monitor;
 import module.database.repository.MonitorRepository;

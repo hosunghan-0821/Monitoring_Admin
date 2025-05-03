@@ -1,4 +1,4 @@
-package com.dopee.monitor.dto;
+package com.dopee.domain.monitor.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

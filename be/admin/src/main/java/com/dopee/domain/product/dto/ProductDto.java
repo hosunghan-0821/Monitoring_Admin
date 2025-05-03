@@ -1,0 +1,72 @@
+package com.dopee.domain.product.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import module.database.entity.Product;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Product 전송용 DTO
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ProductDto {
+
+    private Long id;
+    private String boutique;
+    private String brand;
+    private String sku;
+    private String name;
+    private String link;
+    private String imageSrc;
+
+    /** 연관된 사이즈 정보 */
+    private List<ProductSizeDto> productSizes;
+
+    /* ---------- 변환 헬퍼 ---------- */
+
+    /** Entity → DTO */
+    public static ProductDto fromEntity(Product product) {
+        return ProductDto.builder()
+                .id(product.getId())
+                .boutique(product.getBoutique())
+                .brand(product.getBrand())
+                .sku(product.getSku())
+                .name(product.getName())
+                .link(product.getLink())
+                .imageSrc(product.getImageSrc())
+                .productSizes(
+                        product.getProductSize().stream()
+                                .map(ProductSizeDto::fromEntity)
+                                .collect(Collectors.toList())
+                )
+                .build();
+    }
+
+    /** DTO → Entity (연관 사이즈는 별도로 매핑) */
+    public Product toEntity() {
+        return Product.builder()
+                .id(id)                       // null이면 새 엔티티, 아니면 merge 용도
+                .boutique(boutique)
+                .brand(brand)
+                .sku(sku)
+                .name(name)
+                .link(link)
+                .imageSrc(imageSrc)
+                .build();
+    }
+}
