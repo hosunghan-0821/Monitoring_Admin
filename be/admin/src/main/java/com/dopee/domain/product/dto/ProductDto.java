@@ -67,6 +67,7 @@ public class ProductDto {
                 .name(name)
                 .link(link)
                 .imageSrc(imageSrc)
+                .productSize(productSizes.stream().map(ProductSizeDto::toEntity).collect(Collectors.toList()))
                 .build();
     }
 }

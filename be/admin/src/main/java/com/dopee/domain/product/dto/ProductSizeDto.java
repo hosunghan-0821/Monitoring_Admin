@@ -19,7 +19,6 @@ public class ProductSizeDto {
     private String name;
     private boolean autoBuy;
 
-    /* ---------- 변환 헬퍼 ---------- */
 
     public static ProductSizeDto fromEntity(ProductSize size) {
         return ProductSizeDto.builder()
@@ -29,12 +28,10 @@ public class ProductSizeDto {
                 .build();
     }
 
-    public ProductSize toEntity(Product product) {
+    public ProductSize toEntity(){
         return ProductSize.builder()
-                .id(id)
-                .product(product)   // 부모 엔티티 주입
-                .name(name)
                 .autoBuy(autoBuy)
+                .name(name)
                 .build();
     }
 }
