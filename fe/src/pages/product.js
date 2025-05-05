@@ -7,14 +7,28 @@ import { useAuth } from "../contexts/AuthContext";
 import Pagination from "../components/common/Pagination";
 
 function Product() {
+  console.log("렌더링");
   const { logout } = useAuth();
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0);
-  const [size] = useState(20); // 한 페이지에 보여줄 상품 개수
   const [totalPages, setTotalPages] = useState(0);
   const searchRef = useRef(null);
+  const size = 2; //한페이지에 나올 값
+
+  //테이블 선택 (useState 위치가 살짝 애매한거 같다. 데이터 호출하는 부분도 그렇고..)
+  const [selectedIds, setSelectedIds] = useState(new Set());
+
+  // 행 선택/해제 토글
+  const handleRowSelect = (id, isSelected) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (isSelected) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -48,10 +62,32 @@ function Product() {
     };
 
     fetchProducts();
-  }, [searchTerm, page, size]);
+  }, [searchTerm, page]);
 
   const handleNew = () => console.log("새 상품 등록");
-  const handleDelete = () => console.log("삭제");
+  // 삭제 버튼 클릭 시 API 호출
+  const handleDelete = async () => {
+    if (selectedIds.size === 0) return alert("하나 이상 체크하세요");
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE}/api/products`,
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: Array.from(selectedIds) }),
+        }
+      );
+      if (!res.ok) throw new Error("삭제 실패");
+      // 삭제 후 데이터 리로딩
+      setSelectedIds(new Set());
+      // 혹은 페이지 강제 리로드 로직
+    } catch (err) {
+      console.error(err);
+      alert("삭제 중 오류가 발생했습니다");
+    }
+  };
+
   const handleSearch = () => {
     setPage(0);
     setSearchTerm(inputValue);
@@ -82,7 +118,11 @@ function Product() {
           </div>
         </div>
       </div>
-      <ProductTable products={products} />
+      <ProductTable
+        products={products}
+        selectedIds={selectedIds}
+        onRowSelect={handleRowSelect}
+      />
     </div>
   );
 }

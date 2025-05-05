@@ -1,11 +1,18 @@
 import React from "react";
 import "./ProductRow.css";
 
-export default function ProductRow({ product }) {
+export default function ProductRow({ product, isSelected, onRowSelect }) {
   const { id, boutique, brand, sku, name, link, imageSrc, productSizes } =
     product;
   return (
     <tr className="product-row">
+      <td>
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={(e) => onRowSelect(product.id, e.target.checked)}
+        />
+      </td>
       <td>{id}</td>
       <td>{boutique}</td>
       <td>{brand}</td>
