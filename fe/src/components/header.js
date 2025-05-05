@@ -21,7 +21,7 @@ function Header() {
             <Link to="/crawl">Crawl Management</Link>
           </li>
           <li>
-            <Link to="/about">Brand Products</Link>
+            <Link to="/product">Brand Products</Link>
           </li>
           <li>
             <Link

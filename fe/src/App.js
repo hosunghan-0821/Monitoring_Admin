@@ -8,6 +8,7 @@ import { useAuth } from "./contexts/AuthContext";
 import React, { useState } from "react";
 import "./App.css";
 import Login from "./components/login"; // 로그인 화면
+import Product from "./pages/product.js";
 
 function App() {
   const { isLoggedIn, login, logout } = useAuth();
@@ -28,6 +29,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/crawl" element={<Crawl />} />
+          <Route path="/product" element={<Product />} />
           <Route path="/login" element={<LoginPage />} />
         </Routes>
       </div>

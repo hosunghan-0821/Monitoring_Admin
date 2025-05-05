@@ -1,0 +1,30 @@
+.pagination {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.page-btn {
+  padding: 4px 8px;
+  border: 1px solid #ccd6df;
+  border-radius: 4px;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s;
+}
+.page-btn:hover:not(:disabled) {
+  background-color: #f0f4ff;
+}
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.page-btn.active {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+.ellipsis {
+  padding: 4px 8px;
+  font-size: 14px;
+}
