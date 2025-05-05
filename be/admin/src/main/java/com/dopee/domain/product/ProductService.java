@@ -2,6 +2,7 @@ package com.dopee.domain.product;
 
 import com.dopee.domain.product.dto.ProductDto;
 import com.dopee.domain.product.dto.ProductSizeDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import module.database.entity.Product;
 import module.database.entity.ProductSize;
@@ -83,5 +84,28 @@ public class ProductService {
             productRepository.saveAllProductSize(product.getProductSize());
         }
 
+    }
+
+    @Transactional
+    public void deleteProducts(List<Long> productIds) {
+        List<Product> products = productRepository.findAllByIds(productIds);
+
+        // 2) 조회된 ID 집합 생성
+        Set<Long> foundIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toSet());
+
+        // 3) 누락된 ID 확인
+        List<Long> missingIds = productIds.stream()
+                .filter(id -> !foundIds.contains(id))
+                .toList();
+
+        // 4) 누락된 ID가 있으면 예외
+        if (!missingIds.isEmpty()) {
+            throw new EntityNotFoundException("존재하지 않는 상품 ID: " + missingIds);
+            // 또는 IllegalArgumentException, CustomException 등 원하는 예외로 바꿔도 됩니다.
+        }
+
+        productRepository.deleteAllProduct(productIds);
     }
 }

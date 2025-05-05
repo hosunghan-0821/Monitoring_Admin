@@ -57,4 +57,11 @@ public class ProductController {
         productService.deleteProductSize(productId,productSizeDtos);
         return ResponseEntity.ok(true);
     }
+
+    @DeleteMapping()
+    public ResponseEntity<Boolean> deleteProduct(@RequestBody List<Long> productIds) {
+
+        productService.deleteProducts(productIds);
+        return ResponseEntity.ok(true);
+    }
 }
