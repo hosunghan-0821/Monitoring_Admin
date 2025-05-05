@@ -22,3 +22,34 @@
   text-align: left;
   font-size: 14px;
 }
+
+/* spinner-cell 은 기본 table-cell 상태를 유지 */
+.spinner-cell {
+  padding: 0; /* 필요 시 여백 조정 */
+  height: 100px; /* 셀 높이 지정 */
+}
+
+/* spinner-container 로 플렉스 레이아웃을 적용 */
+.spinner-container {
+  display: flex;
+  align-items: center; /* 수직 중앙 */
+  justify-content: center; /* 수평 중앙 */
+  height: 100%; /* td 높이에 맞춤 */
+}
+
+.no-data-cell {
+  /* 기존 padding 을 없애고 */
+  padding: 0;
+  /* 셀 자체의 높이를 충분히 확보 */
+  height: 100px; /* 원하는 높이로 조정 */
+}
+
+.no-data-container {
+  /* Flex 컨테이너로 만들어 중앙 정렬 */
+  display: flex;
+  align-items: center; /* 세로 중앙 */
+  justify-content: center; /* 가로 중앙 */
+  height: 100%; /* 부모 td 높이에 맞춤 */
+  color: #666; /* 텍스트 색상(선택) */
+  font-size: 14px; /* 텍스트 크기(선택) */
+}

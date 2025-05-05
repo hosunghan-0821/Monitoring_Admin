@@ -3,7 +3,14 @@ import React from "react";
 import ProductRow from "./ProductRow";
 import "./ProductTable.css";
 
-export default function ProductTable({ products, selectedIds, onRowSelect }) {
+export default function ProductTable({
+  loading,
+  products,
+  selectedIds,
+  onRowSelect,
+}) {
+  const columnCount = 9; // 컬럼 수 (checkbox + ID + Boutique + Brand + SKU + Name + Image + Link + Sizes)
+
   return (
     <div className="product-table-container">
       <table className="product-table">
@@ -33,14 +40,30 @@ export default function ProductTable({ products, selectedIds, onRowSelect }) {
           </tr>
         </thead>
         <tbody>
-          {products.map((prod) => (
-            <ProductRow
-              key={prod.id}
-              product={prod}
-              isSelected={selectedIds.has(prod.id)}
-              onRowSelect={onRowSelect}
-            />
-          ))}
+          {loading ? (
+            <tr>
+              <td colSpan={columnCount} className="spinner-cell">
+                <div className="spinner-container">
+                  <div className="spinner">로딩 중...</div>
+                </div>
+              </td>
+            </tr>
+          ) : products.length === 0 ? (
+            <tr>
+              <td colSpan={columnCount} className="no-data-cell">
+                <div className="no-data-container">등록된 상품이 없습니다.</div>
+              </td>
+            </tr>
+          ) : (
+            products.map((prod) => (
+              <ProductRow
+                key={prod.id}
+                product={prod}
+                isSelected={selectedIds.has(prod.id)}
+                onRowSelect={onRowSelect}
+              />
+            ))
+          )}
         </tbody>
       </table>
     </div>

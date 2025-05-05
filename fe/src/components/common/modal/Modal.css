@@ -1,0 +1,37 @@
+/* Modal overlay: 배경 및 중앙 정렬 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+/* Modal container: 흰색 박스, 패딩, 그림자 처리 */
+.modal-container {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  width: 100%;
+  max-width: 24rem;
+}
+
+/* Close button: 우측 상단 × 버튼 스타일 */
+.modal-close-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: #4a5568;
+  cursor: pointer;
+}
+
+.modal-close-button:hover {
+  color: #1a202c;
+}

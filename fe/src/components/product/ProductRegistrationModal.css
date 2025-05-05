@@ -1,0 +1,102 @@
+.prm-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+.prm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.prm-form-group {
+  display: flex;
+  flex-direction: column;
+}
+.prm-label {
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+.prm-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+}
+.prm-sizes {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.prm-button-add-small {
+  background-color: #3182ce;
+  color: #fff;
+  border: none;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  align-self: flex-start;
+  cursor: pointer;
+}
+.prm-button-add-small:hover {
+  background-color: #2b6cb0;
+}
+.prm-size-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.prm-size-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.prm-size-input {
+  width: 4rem;
+  padding: 0.25rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+.prm-button-remove {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #e53e3e;
+  cursor: pointer;
+}
+.prm-button-remove:hover {
+  color: #c53030;
+}
+.prm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.prm-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.prm-button-cancel {
+  border: 1px solid #a0aec0;
+  background: none;
+}
+.prm-button-submit {
+  background-color: #48bb78;
+  color: #fff;
+  border: none;
+}
+.prm-button-submit:hover {
+  background-color: #38a169;
+}
+
+.prm-loading-full {
+  position: relative;
+  min-height: 200px; /* 폼 높이에 맞게 조정 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

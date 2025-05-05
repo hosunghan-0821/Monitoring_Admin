@@ -5,6 +5,7 @@ import SearchBar from "../components/product/SearchBar";
 import ProductTable from "../components/product/ProductTable";
 import { useAuth } from "../contexts/AuthContext";
 import Pagination from "../components/common/Pagination";
+import ProductRegistrationModal from "../components/product/ProductRegistrationModal";
 
 function Product() {
   console.log("렌더링");
@@ -15,10 +16,47 @@ function Product() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const searchRef = useRef(null);
+  const [loading, setLoading] = useState(false); // 로딩 상태 추가
   const size = 2; //한페이지에 나올 값
 
-  //테이블 선택 (useState 위치가 살짝 애매한거 같다. 데이터 호출하는 부분도 그렇고..)
+  //TODO Refactoring 테이블 선택 (useState 위치가 살짝 애매한거 같다. 데이터 호출하는 부분도 그렇고..)
   const [selectedIds, setSelectedIds] = useState(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleNew = () => setIsModalOpen(true);
+  const handleClose = () => setIsModalOpen(false);
+
+  const handleSubmit = async (data) => {
+    console.log("서버로 전송할 데이터:", data);
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE}/api/products`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify([data]),
+        }
+      );
+      if (res.status === 401) {
+        // 인증 오류 시 로그아웃 처리
+        logout();
+        return false;
+      }
+      if (!res.ok) {
+        alert("상품 등록에 실패했습니다.");
+        return false;
+      }
+      const result = await res.json();
+      // 등록 성공 후 필요한 후처리
+      setIsModalOpen(false);
+      fetchProducts();
+      return true;
+    } catch (error) {
+      alert("네트워크 오류가 발생했습니다.");
+      return false;
+    }
+  };
 
   // 행 선택/해제 토글
   const handleRowSelect = (id, isSelected) => {
@@ -30,41 +68,42 @@ function Product() {
     });
   };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const params = new URLSearchParams({
-          page: page.toString(),
-          size: size.toString(),
-          search: searchTerm || "",
-        });
-        const res = await fetch(
-          `${process.env.REACT_APP_API_BASE}/api/products?${params.toString()}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (res.status === 401) {
-          logout();
-          return;
+  // API 조회 함수
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+        search: searchTerm || "",
+      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE}/api/products?${params}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
         }
-        console.log(res);
-        const data = await res.json();
-        setProducts(data.content || data);
-        if (data.totalPages !== undefined) setTotalPages(data.totalPages);
-      } catch (err) {
-        console.error(err);
+      );
+      if (res.status === 401) {
+        logout();
+        return;
       }
-    };
+      const data = await res.json();
+      setProducts(data.content || data);
+      if (data.totalPages !== undefined) setTotalPages(data.totalPages);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // 검색/페이지 변경 시 데이터 재조회
+  useEffect(() => {
     fetchProducts();
   }, [searchTerm, page]);
 
-  const handleNew = () => console.log("새 상품 등록");
   // 삭제 버튼 클릭 시 API 호출
   const handleDelete = async () => {
     if (selectedIds.size === 0) return alert("하나 이상 체크하세요");
@@ -119,9 +158,15 @@ function Product() {
         </div>
       </div>
       <ProductTable
+        loading={loading}
         products={products}
         selectedIds={selectedIds}
         onRowSelect={handleRowSelect}
+      />
+      <ProductRegistrationModal
+        isOpen={isModalOpen}
+        onClose={handleClose}
+        onSubmit={handleSubmit}
       />
     </div>
   );
