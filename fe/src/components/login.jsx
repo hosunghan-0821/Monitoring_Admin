@@ -32,19 +32,13 @@ function Login() {
           credentials: "include",
         }
       );
-
-      console.log(res);
-
       if (!res.ok) {
         // HTTP 에러 코드 처리
         const errMsg = await res.text();
         throw new Error(errMsg || `HTTP ${res.status}`);
       }
-
       login();
     } catch (err) {
-      console.log(err);
-      // 에러 메시지 상태에 저장 → 렌더링 시 표시
       alert("로그인 실패");
     } finally {
       setLoading(false);
