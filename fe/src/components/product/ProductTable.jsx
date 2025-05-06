@@ -8,6 +8,7 @@ export default function ProductTable({
   products,
   selectedIds,
   onRowSelect,
+  onRowClick,
 }) {
   const columnCount = 9; // 컬럼 수 (checkbox + ID + Boutique + Brand + SKU + Name + Image + Link + Sizes)
 
@@ -61,6 +62,7 @@ export default function ProductTable({
                 product={prod}
                 isSelected={selectedIds.has(prod.id)}
                 onRowSelect={onRowSelect}
+                onRowClick={onRowClick}
               />
             ))
           )}

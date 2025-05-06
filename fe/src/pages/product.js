@@ -16,38 +16,56 @@ function Product() {
   const [totalPages, setTotalPages] = useState(0);
   const searchRef = useRef(null);
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
-  const size = 2; //한페이지에 나올 값
+  const size = 20; //한페이지에 나올 값
 
   //TODO Refactoring 테이블 선택 (useState 위치가 살짝 애매한거 같다. 데이터 호출하는 부분도 그렇고..)
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const handleNew = () => {
+    setEditingProduct(null);
+    setIsModalOpen(true);
+  };
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setEditingProduct(null);
+  };
 
-  const handleNew = () => setIsModalOpen(true);
-  const handleClose = () => setIsModalOpen(false);
+  const openEditModal = (product) => {
+    setEditingProduct(product);
+    setIsModalOpen(true);
+  };
 
+  // 등록/수정 핸들러
   const handleSubmit = async (data) => {
+    const isEdit = Boolean(editingProduct?.id);
+    const payload = isEdit ? { ...data, id: editingProduct.id } : data;
+    const url = isEdit
+      ? `${process.env.REACT_APP_API_BASE}/api/products`
+      : `${process.env.REACT_APP_API_BASE}/api/products`;
+    const method = isEdit ? "PUT" : "POST";
+    // POST 시 배열 형태, PUT 시 단일 객체
+    const bodyData = isEdit ? payload : [payload];
+
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_BASE}/api/products`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify([data]),
-        }
-      );
+      const res = await fetch(url, {
+        method,
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyData),
+      });
       if (res.status === 401) {
-        // 인증 오류 시 로그아웃 처리
         logout();
         return false;
       }
       if (!res.ok) {
-        alert("상품 등록에 실패했습니다.");
+        alert(
+          isEdit ? "상품 수정에 실패했습니다." : "상품 등록에 실패했습니다."
+        );
         return false;
       }
-      const result = await res.json();
-      // 등록 성공 후 필요한 후처리
       setIsModalOpen(false);
+      setEditingProduct(null);
       fetchProducts();
       return true;
     } catch (error) {
@@ -165,12 +183,16 @@ function Product() {
         products={products}
         selectedIds={selectedIds}
         onRowSelect={handleRowSelect}
+        onRowClick={openEditModal}
       />
-      <ProductRegistrationModal
-        isOpen={isModalOpen}
-        onClose={handleClose}
-        onSubmit={handleSubmit}
-      />
+      {isModalOpen && (
+        <ProductRegistrationModal
+          isOpen={isModalOpen}
+          onClose={handleClose}
+          onSubmit={handleSubmit}
+          initialData={editingProduct}
+        />
+      )}
     </div>
   );
 }

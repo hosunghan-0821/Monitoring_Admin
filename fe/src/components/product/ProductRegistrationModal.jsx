@@ -1,5 +1,5 @@
 // src/components/ProductRegistrationModal.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../common/modal/Modal";
 import "./ProductRegistrationModal.css";
 
@@ -14,9 +14,17 @@ export default function ProductRegistrationModal({
   isOpen,
   onClose,
   onSubmit,
+  initialData,
 }) {
+  const fixedFields = ["boutique", "brand", "sku", "name", "link", "imageSrc"];
   // 상품 사이즈 관련만 동적 상태로 관리
-  const [productSizes, setProductSizes] = useState([]);
+  const [productSizes, setProductSizes] = useState(
+    initialData?.productSizes?.map(({ name, autoBuy }) => ({
+      name,
+      autoBuy,
+    })) || []
+  );
+
   const [loading, setLoading] = useState(false);
 
   const handleSizeChange = (index, value) => {
@@ -62,8 +70,6 @@ export default function ProductRegistrationModal({
     }
   };
 
-  const fixedFields = ["boutique", "brand", "sku", "name", "link", "imageSrc"];
-
   return (
     <Modal isOpen={isOpen} onClose={handleCancel}>
       {loading ? (
@@ -72,7 +78,9 @@ export default function ProductRegistrationModal({
         </div>
       ) : (
         <>
-          <h2 className="prm-title">새 상품 등록</h2>
+          <h2 className="prm-title">
+            {initialData ? "상품 수정" : "새 상품 등록"}
+          </h2>
           <form onSubmit={handleSubmit} className="prm-form">
             {fixedFields.map((field, idx) => (
               <div className="prm-form-group" key={field}>
@@ -84,6 +92,7 @@ export default function ProductRegistrationModal({
                   name={field}
                   required={idx < 3}
                   className="prm-input"
+                  defaultValue={initialData?.[field] || null}
                 />
               </div>
             ))}
@@ -127,7 +136,7 @@ export default function ProductRegistrationModal({
                 취소
               </button>
               <button type="submit" className="prm-button prm-button-submit">
-                등록
+                {initialData ? "수정" : "등록"}
               </button>
             </div>
           </form>

@@ -1,16 +1,28 @@
 import React from "react";
 import "./ProductRow.css";
 
-export default function ProductRow({ product, isSelected, onRowSelect }) {
+export default function ProductRow({
+  product,
+  isSelected,
+  onRowSelect,
+  onRowClick,
+}) {
   const { id, boutique, brand, sku, name, link, imageSrc, productSizes } =
     product;
   return (
-    <tr className="product-row">
+    <tr
+      className="product-row"
+      style={{ cursor: "pointer" }}
+      onClick={() => onRowClick(product)} // 빈 영역 클릭 시 호출
+    >
       <td>
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={(e) => onRowSelect(product.id, e.target.checked)}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => {
+            onRowSelect(product.id, e.target.checked);
+          }}
         />
       </td>
       <td>{id}</td>
@@ -20,7 +32,12 @@ export default function ProductRow({ product, isSelected, onRowSelect }) {
       <td>{name}</td>
       <td>
         {imageSrc ? (
-          <img src={imageSrc} alt={name} className="product-image" />
+          <img
+            src={imageSrc}
+            alt={name}
+            className="product-image"
+            onClick={(e) => e.stopPropagation()}
+          />
         ) : (
           <span className="text-muted">No Image</span>
         )}
@@ -32,6 +49,7 @@ export default function ProductRow({ product, isSelected, onRowSelect }) {
             target="_blank"
             rel="noopener noreferrer"
             className="text-link"
+            onClick={(e) => e.stopPropagation()}
           >
             View
           </a>
