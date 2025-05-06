@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class CommonController {
+public class SessionController {
 
     private final SessionRegistry sessionRegistry;
 
