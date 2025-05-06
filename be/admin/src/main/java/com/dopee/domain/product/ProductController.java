@@ -1,6 +1,7 @@
 package com.dopee.domain.product;
 
 import com.dopee.domain.product.dto.ProductDto;
+import com.dopee.domain.product.dto.ProductSearchDto;
 import com.dopee.domain.product.dto.ProductSizeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,10 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,8 +35,8 @@ public class ProductController {
      * @param pageable 요청 쿼리 파라미터 ?page=0&size=20&sort=id,desc 등을 자동 처리
      */
     @GetMapping
-    public ResponseEntity<Page<ProductDto>> getProducts(@PageableDefault(size = 20) Pageable pageable) {
-        Page<ProductDto> page = productService.getProducts(pageable);
+    public ResponseEntity<Page<ProductDto>> getProducts(@PageableDefault(size = 20) Pageable pageable, @ModelAttribute ProductSearchDto searchDto) {
+        Page<ProductDto> page = productService.getProducts(pageable, searchDto);
         return ResponseEntity.ok(page);
     }
 
@@ -47,18 +50,18 @@ public class ProductController {
     @PostMapping("/{id}")
     public ResponseEntity<Boolean> addProductSize(@PathVariable(value = "id") Long productId, @RequestBody List<ProductSizeDto> productSizeDtos) {
 
-        productService.saveProductSize(productId,productSizeDtos);
+        productService.saveProductSize(productId, productSizeDtos);
         return ResponseEntity.ok(true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteProductSize(@PathVariable(value = "id") Long productId, @RequestBody List<ProductSizeDto> productSizeDtos) {
 
-        productService.deleteProductSize(productId,productSizeDtos);
+        productService.deleteProductSize(productId, productSizeDtos);
         return ResponseEntity.ok(true);
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     public ResponseEntity<Boolean> deleteProduct(@RequestBody List<Long> productIds) {
 
         productService.deleteProducts(productIds);

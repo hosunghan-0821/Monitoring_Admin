@@ -106,6 +106,7 @@ function Product() {
 
   // 삭제 버튼 클릭 시 API 호출
   const handleDelete = async () => {
+    setLoading(true);
     if (selectedIds.size === 0) return alert("하나 이상 체크하세요");
     try {
       const res = await fetch(
@@ -114,16 +115,20 @@ function Product() {
           method: "DELETE",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ids: Array.from(selectedIds) }),
+          body: JSON.stringify(Array.from(selectedIds)),
         }
       );
       if (!res.ok) throw new Error("삭제 실패");
       // 삭제 후 데이터 리로딩
       setSelectedIds(new Set());
+
       // 혹은 페이지 강제 리로드 로직
     } catch (err) {
       console.error(err);
       alert("삭제 중 오류가 발생했습니다");
+    } finally {
+      setLoading(false);
+      fetchProducts();
     }
   };
 

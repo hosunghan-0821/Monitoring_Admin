@@ -1,6 +1,7 @@
 package com.dopee.domain.product;
 
 import com.dopee.domain.product.dto.ProductDto;
+import com.dopee.domain.product.dto.ProductSearchDto;
 import com.dopee.domain.product.dto.ProductSizeDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,9 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public Page<ProductDto> getProducts(Pageable pageable) {
-        Page<Product> products = productRepository.getProducts(pageable);
+    public Page<ProductDto> getProducts(Pageable pageable, ProductSearchDto productSearchDto) {
+
+        Page<Product> products = productRepository.getProducts(pageable, productSearchDto.getKeyword());
         List<ProductDto> productDtos = products.getContent().stream().map(ProductDto::fromEntity).collect(Collectors.toList());
         return new PageImpl<>(productDtos, pageable, products.getTotalElements());
     }
