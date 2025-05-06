@@ -53,6 +53,22 @@ public class ProductService {
     }
 
     @Transactional
+    public void updateProduct(ProductDto productDto) {
+        //Global Exception Handler로 처리 필요
+        Product product = productRepository.findById(productDto.getId()).orElseThrow(() -> new RuntimeException("유효하지 않은 ID 입니다."));
+
+        product.update(productDto.getBoutique(), productDto.getBrand(), productDto.getSku(), productDto.getName(), productDto.getLink(), productDto.getImageSrc());
+        productRepository.deleteProductSize(productDto.getId());
+        List<ProductSize> productSizes = productDto.getProductSizes().stream()
+                .map(v -> {
+                    ProductSize productSize = v.toEntity();
+                    productSize.setProduct(product);
+                    return productSize;
+                }).toList();
+        productRepository.saveAllProductSize(productSizes);
+    }
+
+    @Transactional
     public void deleteProductSize(Long productId, List<ProductSizeDto> productSizeDtos) {
 
         //Global Exception Handler로 처리 필요
@@ -110,4 +126,6 @@ public class ProductService {
 
         productRepository.deleteAllProduct(productIds);
     }
+
+
 }
