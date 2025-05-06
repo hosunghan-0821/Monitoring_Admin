@@ -1,6 +1,7 @@
 package com.dopee.common;
 
 
+import com.dopee.common.dto.SignupDto;
 import com.dopee.security.SessionListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,9 +23,10 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class SessionController {
+public class CommonController {
 
     private final SessionRegistry sessionRegistry;
+    private final UserService userService;
 
     //유효한 세션인지 체크하는 API
     @GetMapping("/auth/session")
@@ -39,6 +43,16 @@ public class SessionController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    /*
+    * 새로운 Admin 계정 발급
+    * 로그인 권한 있는 사람은 누구나 가능
+    * */
+    @PostMapping("/auth/signup")
+    private ResponseEntity<Boolean> signUp(@RequestBody SignupDto signupDto){
+
+        userService.registerAdmin(signupDto);
+        return ResponseEntity.ok(true);
+    }
 
     //TODO Session 확인용 API 제거 필요
     @GetMapping("/session/check")
