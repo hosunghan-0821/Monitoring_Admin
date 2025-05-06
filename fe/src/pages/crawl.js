@@ -29,9 +29,7 @@ function Crawl() {
         const data = await res.json();
         setMonitorData(data);
         originalDataRef.current = data;
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     };
 
     fetchMonitor();

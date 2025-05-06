@@ -8,7 +8,6 @@ import Pagination from "../components/common/Pagination";
 import ProductRegistrationModal from "../components/product/ProductRegistrationModal";
 
 function Product() {
-  console.log("렌더링");
   const { logout } = useAuth();
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,7 +26,6 @@ function Product() {
   const handleClose = () => setIsModalOpen(false);
 
   const handleSubmit = async (data) => {
-    console.log("서버로 전송할 데이터:", data);
     try {
       const res = await fetch(
         `${process.env.REACT_APP_API_BASE}/api/products`,
@@ -75,7 +73,7 @@ function Product() {
       const params = new URLSearchParams({
         page: page.toString(),
         size: size.toString(),
-        search: searchTerm || "",
+        keyword: searchTerm || "",
       });
       const res = await fetch(
         `${process.env.REACT_APP_API_BASE}/api/products?${params}`,
