@@ -3,21 +3,43 @@ import "./Pagination.css";
 
 export default function Pagination({ current, total, onPageChange }) {
   const visiblePages = 5;
-  let start = Math.max(0, current - Math.floor(visiblePages / 2));
-  let end = start + visiblePages - 1;
-  if (end >= total) {
+  let start = current - Math.floor(visiblePages / 2);
+  let end = current + Math.floor(visiblePages / 2);
+
+  // Adjust bounds
+  if (start < 0) {
+    start = 0;
+    end = Math.min(visiblePages - 1, total - 1);
+  }
+  if (end > total - 1) {
     end = total - 1;
-    start = Math.max(0, end - visiblePages + 1);
+    start = Math.max(0, total - visiblePages);
   }
 
   const pages = [];
-  if (start > 0) pages.push("first");
-  for (let i = start; i <= end; i++) pages.push(i);
-  if (end < total - 1) pages.push("last");
+
+  // First page + leading ellipsis
+  if (start > 0) {
+    pages.push(0);
+    if (start > 1) pages.push("left-ellipsis");
+  }
+
+  // Main window
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  // Trailing ellipsis + last page
+  if (end < total - 1) {
+    if (end < total - 2) pages.push("right-ellipsis");
+    pages.push(total - 1);
+  }
 
   const handleClick = (value) => {
-    if (value === "first") onPageChange(0);
-    else if (value === "last") onPageChange(total - 1);
+    if (value === "left-ellipsis")
+      onPageChange(start - visiblePages >= 0 ? start - visiblePages : 0);
+    else if (value === "right-ellipsis")
+      onPageChange(end + visiblePages < total ? end + visiblePages : total - 1);
     else onPageChange(value);
   };
 
@@ -30,15 +52,16 @@ export default function Pagination({ current, total, onPageChange }) {
       >
         &lt;
       </button>
-      {pages.map((p, idx) => {
-        if (p === "first" || p === "last") {
-          return (
-            <span key={idx} className="ellipsis">
-              ...
-            </span>
-          );
-        }
-        return (
+      {pages.map((p, idx) =>
+        p === "left-ellipsis" || p === "right-ellipsis" ? (
+          <button
+            key={idx}
+            className="page-btn ellipsis"
+            onClick={() => handleClick(p)}
+          >
+            ...
+          </button>
+        ) : (
           <button
             key={p}
             className={`page-btn ${p === current ? "active" : ""}`}
@@ -46,8 +69,8 @@ export default function Pagination({ current, total, onPageChange }) {
           >
             {p + 1}
           </button>
-        );
-      })}
+        )
+      )}
       <button
         className="page-btn"
         disabled={current === total - 1}
