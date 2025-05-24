@@ -6,11 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import module.database.entity.Product;
 
 import java.util.List;
@@ -34,12 +29,21 @@ public class ProductDto {
     private String link;
     private String imageSrc;
 
-    /** 연관된 사이즈 정보 */
+    /**
+     * 연관된 사이즈 정보
+     */
     private List<ProductSizeDto> productSizes;
+
+    /**
+     * 연관된 SKU 토큰 정보
+     */
+    private List<ProductSkuTokenDto> productSkuTokens;
 
     /* ---------- 변환 헬퍼 ---------- */
 
-    /** Entity → DTO */
+    /**
+     * Entity → DTO
+     */
     public static ProductDto fromEntity(Product product) {
         return ProductDto.builder()
                 .id(product.getId())
@@ -54,10 +58,17 @@ public class ProductDto {
                                 .map(ProductSizeDto::fromEntity)
                                 .collect(Collectors.toList())
                 )
+                .productSkuTokens(
+                        product.getProductToken().stream()
+                                .map(ProductSkuTokenDto::fromEntity)
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 
-    /** DTO → Entity (연관 사이즈는 별도로 매핑) */
+    /**
+     * DTO → Entity (연관 사이즈 & 토큰은 별도 매핑)
+     */
     public Product toEntity() {
         return Product.builder()
                 .id(id)                       // null이면 새 엔티티, 아니면 merge 용도
@@ -67,7 +78,15 @@ public class ProductDto {
                 .name(name)
                 .link(link)
                 .imageSrc(imageSrc)
-                .productSize(productSizes.stream().map(ProductSizeDto::toEntity).collect(Collectors.toList()))
+                .productSize(
+                        productSizes.stream()
+                                .map(ProductSizeDto::toEntity)
+                                .collect(Collectors.toList())
+                )
+                .productToken(productSkuTokens.stream()
+                        .map(ProductSkuTokenDto::toEntity)
+                        .collect(Collectors.toList()))
                 .build();
+
     }
 }

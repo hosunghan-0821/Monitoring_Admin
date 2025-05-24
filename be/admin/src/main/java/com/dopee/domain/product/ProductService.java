@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import module.database.entity.Product;
 import module.database.entity.ProductSize;
+import module.database.entity.ProductSkuToken;
 import module.database.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,6 +59,8 @@ public class ProductService {
         Product product = productRepository.findById(productDto.getId()).orElseThrow(() -> new RuntimeException("유효하지 않은 ID 입니다."));
 
         product.update(productDto.getBoutique(), productDto.getBrand(), productDto.getSku(), productDto.getName(), productDto.getLink(), productDto.getImageSrc());
+
+        //전체 프러덕트 사이즈 전체 삭제 후 재 등록
         productRepository.deleteProductSize(productDto.getId());
         List<ProductSize> productSizes = productDto.getProductSizes().stream()
                 .map(v -> {
@@ -66,6 +69,17 @@ public class ProductService {
                     return productSize;
                 }).toList();
         productRepository.saveAllProductSize(productSizes);
+
+        //전체 프러덕트 토큰 삭제 후 재 등록
+        productRepository.deleteProductSkuToken(product.getId());
+
+        List<ProductSkuToken> productSkuTokens = productDto.getProductSkuTokens().stream()
+                .map(v -> {
+                    ProductSkuToken productSkuToken = v.toEntity();
+                    productSkuToken.setProduct(product);
+                    return productSkuToken;
+                }).toList();
+        productRepository.saveAllProductSkuToken(productSkuTokens);
     }
 
     @Transactional
@@ -99,7 +113,9 @@ public class ProductService {
 
             //product 세팅 및 size 저장
             product.getProductSize().forEach(productSize -> productSize.setProduct(product));
+            product.getProductToken().forEach(productSkuToken -> productSkuToken.setProduct(product));
             productRepository.saveAllProductSize(product.getProductSize());
+            productRepository.saveAllProductSkuToken(product.getProductToken());
         }
 
     }
