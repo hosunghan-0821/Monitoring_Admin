@@ -34,10 +34,10 @@ export default function ProductTable({
             <th>Boutique</th>
             <th>Brand</th>
             <th>SKU</th>
-            <th>Name</th>
-            <th>Image</th>
-            <th>Link</th>
+            <th>price</th>
+            <th>count</th>
             <th>Sizes</th>
+            <th>tokens</th>
           </tr>
         </thead>
         <tbody>

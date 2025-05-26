@@ -7,8 +7,16 @@ export default function ProductRow({
   onRowSelect,
   onRowClick,
 }) {
-  const { id, boutique, brand, sku, name, link, imageSrc, productSizes } =
-    product;
+  const {
+    id,
+    boutique,
+    brand,
+    sku,
+    productSizes,
+    productSkuTokens,
+    price,
+    count,
+  } = product;
   return (
     <tr
       className="product-row"
@@ -29,34 +37,8 @@ export default function ProductRow({
       <td>{boutique}</td>
       <td>{brand}</td>
       <td>{sku}</td>
-      <td>{name}</td>
-      <td>
-        {imageSrc ? (
-          <img
-            src={imageSrc}
-            alt={name}
-            className="product-image"
-            onClick={(e) => e.stopPropagation()}
-          />
-        ) : (
-          <span className="text-muted">No Image</span>
-        )}
-      </td>
-      <td>
-        {link ? (
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-link"
-            onClick={(e) => e.stopPropagation()}
-          >
-            View
-          </a>
-        ) : (
-          <span className="text-muted">No Link</span>
-        )}
-      </td>
+      <td>{price}</td>
+      <td>{count}</td>
       <td>
         {productSizes.map((size) => (
           <span
@@ -64,6 +46,13 @@ export default function ProductRow({
             className={`size-tag ${size.autoBuy ? "auto-buy" : ""}`}
           >
             {size.name}
+          </span>
+        ))}
+      </td>
+      <td>
+        {productSkuTokens.map((token) => (
+          <span key={token.id} className={`size-tag`}>
+            {token.token}
           </span>
         ))}
       </td>

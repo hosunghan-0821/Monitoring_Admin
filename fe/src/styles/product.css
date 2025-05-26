@@ -77,3 +77,12 @@
 .btn-delete:hover {
   background-color: #b91c1c;
 }
+/* 파일 업로드 버튼 스타일 */
+.btn-upload {
+  background-color: #10b981; /* Emerald green */
+  color: #ffffff;
+}
+
+.btn-upload:hover {
+  background-color: #059669; /* Darker emerald */
+}

@@ -16,13 +16,18 @@ export default function ProductRegistrationModal({
   onSubmit,
   initialData,
 }) {
-  const fixedFields = ["boutique", "brand", "sku", "name", "link", "imageSrc"];
+  const fixedFields = ["boutique", "brand", "sku", "price", "count"];
   // 상품 사이즈 관련만 동적 상태로 관리
   const [productSizes, setProductSizes] = useState(
     initialData?.productSizes?.map(({ name, autoBuy }) => ({
       name,
       autoBuy,
     })) || []
+  );
+
+  // SKU 토큰 상태
+  const [productSkuTokens, setProductSkuTokens] = useState(
+    initialData?.productSkuTokens?.map(({ id, token }) => ({ id, token })) || []
   );
 
   const [loading, setLoading] = useState(false);
@@ -35,9 +40,19 @@ export default function ProductRegistrationModal({
     });
   };
 
+  // token 변경 핸들러
+  const handleTokenChange = (index, value) => {
+    setProductSkuTokens((prev) => {
+      const tokens = [...prev];
+      tokens[index] = { ...tokens[index], token: value };
+      return tokens;
+    });
+  };
+
   // 취소 시 사이즈 초기화 및 모달 닫기
   const handleCancel = () => {
     setProductSizes([]);
+    setProductSkuTokens([]);
     onClose();
   };
 
@@ -49,6 +64,14 @@ export default function ProductRegistrationModal({
     setProductSizes((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // token 추가
+  const addToken = () => {
+    setProductSkuTokens((prev) => [...prev, { id: null, token: "" }]);
+  };
+  // token 제거
+  const removeToken = (index) =>
+    setProductSkuTokens((prev) => prev.filter((_, i) => i !== index));
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -58,15 +81,16 @@ export default function ProductRegistrationModal({
       boutique: data.get("boutique"),
       brand: data.get("brand"),
       sku: data.get("sku"),
-      name: data.get("name"),
-      link: data.get("link"),
-      imageSrc: data.get("imageSrc"),
+      price: data.get("price"),
+      count: data.get("count"),
       productSizes,
+      productSkuTokens,
     };
     const res = await onSubmit(payload);
     setLoading(false);
     if (res) {
       setProductSizes([]);
+      setProductSkuTokens([]);
     }
   };
 
@@ -119,6 +143,37 @@ export default function ProductRegistrationModal({
                       className="prm-button-remove"
                       onClick={() => removeSize(idx)}
                       aria-label="Remove size"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SKU 토큰 동적 리스트 */}
+            <div className="prm-tokens">
+              <button
+                type="button"
+                className="prm-button-add-small"
+                onClick={addToken}
+              >
+                + Token
+              </button>
+              <div className="prm-token-list">
+                {productSkuTokens.map((tok, idx) => (
+                  <div className="prm-token-group" key={idx}>
+                    <input
+                      placeholder="Token"
+                      value={tok.token}
+                      onChange={(e) => handleTokenChange(idx, e.target.value)}
+                      className="prm-token-input"
+                    />
+                    <button
+                      type="button"
+                      className="prm-button-remove"
+                      onClick={() => removeToken(idx)}
+                      aria-label="Remove token"
                     >
                       ×
                     </button>

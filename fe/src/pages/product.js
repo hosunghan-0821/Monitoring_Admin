@@ -22,6 +22,48 @@ function Product() {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+
+  // file upload ref
+  const fileInputRef = useRef(null);
+
+  // 파일 업로드 핸들러
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE}/api/products/upload`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
+      if (res.status === 401) {
+        logout();
+        return;
+      }
+      if (!res.ok) {
+        alert("파일 업로드에 실패했습니다.");
+      } else {
+        alert("파일 업로드 성공");
+        fetchProducts();
+      }
+    } catch (err) {
+      console.error(err);
+      alert("네트워크 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+      e.target.value = null; // 같은 파일 재업로드 가능
+    }
+  };
+
   const handleNew = () => {
     setEditingProduct(null);
     setIsModalOpen(true);
@@ -175,6 +217,16 @@ function Product() {
             <button className="btn btn-delete" onClick={handleDelete}>
               삭제
             </button>
+            <button className="btn btn-upload" onClick={handleUploadClick}>
+              파일 업로드
+            </button>
+            <input
+              type="file"
+              accept="*/*"
+              ref={fileInputRef}
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
           </div>
         </div>
       </div>

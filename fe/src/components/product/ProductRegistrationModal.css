@@ -22,6 +22,10 @@
   border-radius: 0.25rem;
   font-size: 1rem;
 }
+
+/* ========================= */
+/* 사이즈 섹션             */
+/* ========================= */
 .prm-sizes {
   margin-top: 1rem;
   display: flex;
@@ -58,6 +62,35 @@
   border-radius: 0.25rem;
   font-size: 0.875rem;
 }
+
+/* ========================= */
+/* 토큰 섹션               */
+/* ========================= */
+.prm-tokens {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.prm-token-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.prm-token-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.prm-token-input {
+  width: 6rem;
+  padding: 0.25rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+/* 사이즈·토큰 공통 삭제 버튼 */
 .prm-button-remove {
   background: none;
   border: none;
@@ -68,6 +101,10 @@
 .prm-button-remove:hover {
   color: #c53030;
 }
+
+/* ========================= */
+/* 액션 버튼 섹션          */
+/* ========================= */
 .prm-actions {
   display: flex;
   justify-content: flex-end;
@@ -93,6 +130,9 @@
   background-color: #38a169;
 }
 
+/* ========================= */
+/* 로딩 인디케이터          */
+/* ========================= */
 .prm-loading-full {
   position: relative;
   min-height: 200px; /* 폼 높이에 맞게 조정 */
