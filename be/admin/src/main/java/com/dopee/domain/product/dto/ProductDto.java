@@ -28,6 +28,7 @@ public class ProductDto {
     private String name;
     private String link;
     private String imageSrc;
+    private Long count;
 
     /**
      * 연관된 사이즈 정보
@@ -53,6 +54,7 @@ public class ProductDto {
                 .name(product.getName())
                 .link(product.getLink())
                 .imageSrc(product.getImageSrc())
+                .count(product.getCount())
                 .productSizes(
                         product.getProductSize().stream()
                                 .map(ProductSizeDto::fromEntity)
@@ -78,6 +80,7 @@ public class ProductDto {
                 .name(name)
                 .link(link)
                 .imageSrc(imageSrc)
+                .count(count == null ? 0L : count)
                 .productSize(
                         productSizes.stream()
                                 .map(ProductSizeDto::toEntity)
