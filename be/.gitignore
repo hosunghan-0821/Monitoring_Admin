@@ -43,3 +43,4 @@ bin/
 
 application-dev.properties
 application.properties
+/data
