@@ -13,7 +13,7 @@ function Product() {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalProductCounts, setTotalProductCounts] = useState(0);
   const searchRef = useRef(null);
   const [loading, setLoading] = useState(false); // 로딩 상태 추가
   const size = 20; //한페이지에 나올 값
@@ -25,6 +25,47 @@ function Product() {
 
   // file upload ref
   const fileInputRef = useRef(null);
+
+  //파일 다운로드
+  // 파일 다운로드 핸들러
+  const handleDownloadClick = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE}/api/products/download`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (res.status === 401) {
+        logout();
+        return;
+      }
+      if (!res.ok) {
+        throw new Error("다운로드 실패");
+      }
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") || "";
+      const match = disposition.match(/filename="(.+)"/);
+      const filename = match ? match[1] : "products.xlsx";
+      console.log("disposition : " + disposition);
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.setAttribute("download", filename);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("파일 다운로드 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // 파일 업로드 핸들러
   const handleUploadClick = () => {
@@ -149,7 +190,8 @@ function Product() {
       }
       const data = await res.json();
       setProducts(data.content || data);
-      if (data.totalPages !== undefined) setTotalPages(data.totalPages);
+      if (data.totalPages !== undefined)
+        setTotalProductCounts(data.totalElements);
     } catch (err) {
       console.error(err);
     } finally {
@@ -205,11 +247,19 @@ function Product() {
           onSearch={handleSearch}
         />
         <div className="header-actions">
+          {/* 총 개수 표시 */}
+          <span className="total-count">
+            총 {totalProductCounts.toLocaleString()}건
+          </span>
+
           <Pagination
-            current={page}
-            total={totalPages}
+            currentPage={page}
+            totalCount={totalProductCounts}
+            pageSize={20}
+            siblingCount={1} // 앞뒤로 보여줄 숫자 개수
             onPageChange={setPage}
           />
+
           <div className="button-group">
             <button className="btn btn-new" onClick={handleNew}>
               새 상품 등록
@@ -227,6 +277,13 @@ function Product() {
               style={{ display: "none" }}
               onChange={handleFileChange}
             />
+            <button
+              className="btn btn-download"
+              onClick={handleDownloadClick}
+              disabled={loading}
+            >
+              엑셀 다운로드
+            </button>
           </div>
         </div>
       </div>

@@ -1,80 +1,90 @@
 import React from "react";
+import { usePagination, DOTS } from "./usePagination";
 import "./Pagination.css";
 
-export default function Pagination({ current, total, onPageChange }) {
-  const visiblePages = 5;
-  let start = current - Math.floor(visiblePages / 2);
-  let end = current + Math.floor(visiblePages / 2);
+export default function Pagination({
+  currentPage, // 0-based 인덱스
+  totalCount, // 전체 아이템 개수
+  pageSize, // 한 페이지에 보여줄 아이템 개수
+  onPageChange, // (newPageIndex: number) => void
+  siblingCount = 1,
+}) {
+  const paginationRange = usePagination({
+    currentPage,
+    totalCount,
+    pageSize,
+    siblingCount,
+  });
 
-  // Adjust bounds
-  if (start < 0) {
-    start = 0;
-    end = Math.min(visiblePages - 1, total - 1);
-  }
-  if (end > total - 1) {
-    end = total - 1;
-    start = Math.max(0, total - visiblePages);
-  }
+  // 전체 페이지 수
+  const totalPageCount = Math.ceil(totalCount / pageSize);
 
-  const pages = [];
-
-  // First page + leading ellipsis
-  if (start > 0) {
-    pages.push(0);
-    if (start > 1) pages.push("left-ellipsis");
-  }
-
-  // Main window
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-
-  // Trailing ellipsis + last page
-  if (end < total - 1) {
-    if (end < total - 2) pages.push("right-ellipsis");
-    pages.push(total - 1);
-  }
-
-  const handleClick = (value) => {
-    if (value === "left-ellipsis")
-      onPageChange(start - visiblePages >= 0 ? start - visiblePages : 0);
-    else if (value === "right-ellipsis")
-      onPageChange(end + visiblePages < total ? end + visiblePages : total - 1);
-    else onPageChange(value);
+  // 이전 페이지로 이동
+  const onNext = () => {
+    if (currentPage < totalPageCount - 1) {
+      onPageChange(currentPage + 1);
+    }
   };
+
+  // 다음 페이지로 이동
+  const onPrevious = () => {
+    if (currentPage > 0) {
+      onPageChange(currentPage - 1);
+    }
+  };
+
+  // 페이지나 DOTS가 하나도 없다면 렌더링할 필요 없음
+  if (currentPage === 0 && paginationRange.length < 2) {
+    return null;
+  }
 
   return (
     <div className="pagination">
+      {/* 이전 버튼 */}
       <button
         className="page-btn"
-        disabled={current === 0}
-        onClick={() => onPageChange(current - 1)}
+        onClick={onPrevious}
+        disabled={currentPage === 0}
       >
         &lt;
       </button>
-      {pages.map((p, idx) =>
-        p === "left-ellipsis" || p === "right-ellipsis" ? (
+
+      {/* 페이지 번호들 */}
+      {paginationRange.map((pageIdx, idx) => {
+        if (pageIdx === DOTS) {
+          return (
+            <button
+              key={`dots-${idx}`}
+              className="page-btn ellipsis"
+              onClick={() => {
+                // 생략부(…)를 클릭했을 때, “걸린 구간” 만큼 이동하는 예시
+                // 여기서는 그냥 DOTS 클릭 시 아무 동작 안 하도록 두거나,
+                // 현재 페이지 기준으로 한 윈도우만큼 이동해도 됩니다.
+              }}
+              disabled
+            >
+              &#8230;
+            </button>
+          );
+        }
+
+        // 실제 페이지 번호
+        return (
           <button
-            key={idx}
-            className="page-btn ellipsis"
-            onClick={() => handleClick(p)}
+            key={`page-${pageIdx}`}
+            className={`page-btn ${pageIdx === currentPage ? "active" : ""}`}
+            onClick={() => onPageChange(pageIdx)}
           >
-            ...
+            {pageIdx + 1}
           </button>
-        ) : (
-          <button
-            key={p}
-            className={`page-btn ${p === current ? "active" : ""}`}
-            onClick={() => handleClick(p)}
-          >
-            {p + 1}
-          </button>
-        )
-      )}
+        );
+      })}
+
+      {/* 다음 버튼 */}
       <button
         className="page-btn"
-        disabled={current === total - 1}
-        onClick={() => onPageChange(current + 1)}
+        onClick={onNext}
+        disabled={currentPage === totalPageCount - 1}
       >
         &gt;
       </button>
