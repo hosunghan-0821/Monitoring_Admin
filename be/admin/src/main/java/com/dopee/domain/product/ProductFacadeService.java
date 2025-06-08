@@ -1,24 +1,20 @@
 package com.dopee.domain.product;
 
-import com.dopee.common.util.FileUtil;
 import com.dopee.domain.product.dto.ProductDto;
 import com.dopee.domain.product.excel.ProductExcelParser;
 import com.dopee.domain.product.excel.ProductExcelWriter;
-import jakarta.servlet.ServletOutputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,14 +33,12 @@ public class ProductFacadeService {
         }
         List<ProductDto> parseProductDto = excelParser.parse(file);
         List<ProductDto> filteredProductDto = parseProductDto.stream()
-                .filter(dto ->
-                        StringUtils.hasText(dto.getBoutique()) &&
-                                StringUtils.hasText(dto.getBrand()) &&
-                                StringUtils.hasText(dto.getSku())
-                )
+                .filter(dto -> StringUtils.hasText(dto.getBoutique()) && StringUtils.hasText(dto.getBrand()) && StringUtils.hasText(dto.getSku()))
                 .collect(Collectors.toList());
 
-        productService.saveProducts(filteredProductDto);
+        //사용자에게 보여지기 편하게 하기 위해서
+        Collections.reverse(filteredProductDto);
+        productService.upsertProducts(filteredProductDto);
 
     }
 

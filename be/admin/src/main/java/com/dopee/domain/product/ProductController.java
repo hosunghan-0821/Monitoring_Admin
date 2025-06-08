@@ -4,8 +4,6 @@ import com.dopee.common.util.FileUtil;
 import com.dopee.domain.product.dto.ProductDto;
 import com.dopee.domain.product.dto.ProductSearchDto;
 import com.dopee.domain.product.dto.ProductSizeDto;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

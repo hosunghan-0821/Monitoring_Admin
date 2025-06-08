@@ -6,6 +6,7 @@ import com.dopee.domain.product.dto.ProductSizeDto;
 import com.dopee.domain.product.dto.ProductSkuTokenDto;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class ProductExcelParser extends AbstractExcelParser<ProductDto> {
+
+    private final DataFormatter formatter = new DataFormatter();
 
     @Override
     protected ProductDto mapRow(Row row) {
@@ -37,8 +40,9 @@ public class ProductExcelParser extends AbstractExcelParser<ProductDto> {
                         .build())
                 .collect(Collectors.toList());
 
+        Cell idCell = row.getCell(ProductExcelColumn.DB_ID.getIndex(), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
         return ProductDto.builder()
-                .id((long) row.getCell(ProductExcelColumn.DB_ID.getIndex(), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getNumericCellValue())
+                .id(idCell != null ? (long) idCell.getNumericCellValue() : null)
                 .boutique(getStringCell(row, ProductExcelColumn.BOUTIQUE.getIndex()))
                 .brand(getStringCell(row, ProductExcelColumn.BRAND.getIndex()))
                 .sku(getStringCell(row, ProductExcelColumn.SKU.getIndex()))
@@ -55,8 +59,11 @@ public class ProductExcelParser extends AbstractExcelParser<ProductDto> {
      */
     private String getStringCell(Row row, int idx) {
         Cell cell = row.getCell(idx, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-        if (cell == null || cell.getCellType() != CellType.STRING) {
+        if (cell == null ) {
             return "";
+        }
+        if( cell.getCellType() != CellType.STRING) {
+            return formatter.formatCellValue(cell);
         }
         return cell.getStringCellValue();
     }

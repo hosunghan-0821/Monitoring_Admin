@@ -3,6 +3,7 @@ package com.dopee.domain.product;
 import com.dopee.domain.product.dto.ProductDto;
 import com.dopee.domain.product.dto.ProductSearchDto;
 import com.dopee.domain.product.dto.ProductSizeDto;
+import com.dopee.domain.product.dto.ProductSkuTokenDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import module.database.entity.Product;
@@ -18,7 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,31 +59,9 @@ public class ProductService {
 
     @Transactional
     public void updateProduct(ProductDto productDto) {
-        //Global Exception Handler로 처리 필요
-        Product product = productRepository.findById(productDto.getId()).orElseThrow(() -> new RuntimeException("유효하지 않은 ID 입니다."));
-
-        product.update(productDto.getBoutique(), productDto.getBrand(), productDto.getSku(), productDto.getName(), productDto.getLink(), productDto.getImageSrc(), productDto.getPrice(), productDto.getCount());
-
-        //전체 프러덕트 사이즈 전체 삭제 후 재 등록
-        productRepository.deleteProductSize(productDto.getId());
-        List<ProductSize> productSizes = productDto.getProductSizes().stream()
-                .map(v -> {
-                    ProductSize productSize = v.toEntity();
-                    productSize.setProduct(product);
-                    return productSize;
-                }).toList();
-        productRepository.saveAllProductSize(productSizes);
-
-        //전체 프러덕트 토큰 삭제 후 재 등록
-        productRepository.deleteProductSkuToken(product.getId());
-
-        List<ProductSkuToken> productSkuTokens = productDto.getProductSkuTokens().stream()
-                .map(v -> {
-                    ProductSkuToken productSkuToken = v.toEntity();
-                    productSkuToken.setProduct(product);
-                    return productSkuToken;
-                }).toList();
-        productRepository.saveAllProductSkuToken(productSkuTokens);
+        Product product = productRepository.findById(productDto.getId())
+                .orElseThrow(() -> new RuntimeException("유효하지 않은 ID 입니다."));
+        applyUpdate(product, productDto);
     }
 
     @Transactional
@@ -105,9 +87,7 @@ public class ProductService {
 
     @Transactional
     public void saveProducts(List<ProductDto> productDtos) {
-
         List<Product> products = productDtos.stream().map(ProductDto::toEntity).toList();
-
         for (Product product : products) {
             productRepository.saveProduct(product);
 
@@ -117,7 +97,82 @@ public class ProductService {
             productRepository.saveAllProductSize(product.getProductSize());
             productRepository.saveAllProductSkuToken(product.getProductToken());
         }
+    }
 
+    @Transactional
+    public void upsertProducts(List<ProductDto> productDtos) {
+
+        List<ProductDto> updateProductDtos = new ArrayList<>();
+        for (ProductDto productDto : productDtos) {
+            //Insert
+            if (productDto.getId() == null) {
+                Product product = productDto.toEntity();
+                productRepository.saveProduct(product);
+                //product 세팅 및 size 저장
+                product.getProductSize().forEach(productSize -> {
+                    productSize.setProduct(product);
+                    productSize.setAutoBuy(true);
+                });
+                product.getProductToken().forEach(productSkuToken -> productSkuToken.setProduct(product));
+                productRepository.saveAllProductSize(product.getProductSize());
+                productRepository.saveAllProductSkuToken(product.getProductToken());
+            } else {  //Update
+                updateProductDtos.add(productDto);
+            }
+        }
+        updateProductByBulk(updateProductDtos);
+    }
+
+
+    /**
+     * 공통: 엔티티 필드 업데이트 + 사이즈/토큰 동기화
+     */
+    private void applyUpdate(Product product, ProductDto dto) {
+        // 1) 기본 필드
+        product.update(
+                dto.getBoutique(),
+                dto.getBrand(),
+                dto.getSku(),
+                dto.getName(),
+                dto.getLink(),
+                dto.getImageSrc(),
+                dto.getPrice(),
+                dto.getCount()
+        );
+        // 2) 사이즈 동기화
+        syncSizes(product, dto.getProductSizes());
+        // 3) 토큰 동기화
+        syncTokens(product, dto.getProductSkuTokens());
+    }
+
+    /**
+     * ProductSize: 내용이 완전히 같으면 스킵, 아니면 delete→insert
+     */
+    private void syncSizes(Product product, List<ProductSizeDto> sizeDtos) {
+        List<String> newNames = sizeDtos.stream()
+                .map(ProductSizeDto::getName)
+                .sorted()
+                .toList();
+
+        List<String> existingNames = product.getProductSize().stream()
+                .map(ProductSize::getName)
+                .sorted()
+                .toList();
+
+        if (existingNames.equals(newNames)) {
+            return;
+        }
+
+        productRepository.deleteProductSize(product.getId());
+        List<ProductSize> toSave = sizeDtos.stream()
+                .map(dto -> {
+                    ProductSize e = dto.toEntity();
+                    e.setProduct(product);
+                    e.setAutoBuy(true);
+                    return e;
+                })
+                .toList();
+        productRepository.saveAllProductSize(toSave);
     }
 
     @Transactional
@@ -143,10 +198,56 @@ public class ProductService {
         productRepository.deleteAllProduct(productIds);
     }
 
-
     @Transactional(readOnly = true)
     public List<ProductDto> getAllProducts() {
         List<Product> allProductsInBatch = productRepository.findAllProductsInBatch();
         return allProductsInBatch.stream().map(ProductDto::fromEntity).collect(Collectors.toList());
+    }
+
+    private void updateProductByBulk(List<ProductDto> updateProductDtos) {
+        List<Long> updatedProductIds = updateProductDtos.stream().map(ProductDto::getId).toList();
+
+        List<Product> products = productRepository.findAllByIds(updatedProductIds);
+
+        Map<Long, Product> productById = products.stream()
+                .collect(Collectors.toMap(Product::getId,       // key mapper: 제품 ID
+                        Function.identity()   // value mapper: Product 객체 자체
+                ));
+
+        for (ProductDto dto : updateProductDtos) {
+            Product product = productById.get(dto.getId());
+            if (product != null) {
+                applyUpdate(product, dto);
+            }
+        }
+    }
+
+    /**
+     * ProductSkuToken: 내용이 완전히 같으면 스킵, 아니면 delete→insert
+     */
+    private void syncTokens(Product product, List<ProductSkuTokenDto> tokenDtos) {
+        List<String> newTokens = tokenDtos.stream()
+                .map(ProductSkuTokenDto::getToken)
+                .sorted()
+                .toList();
+
+        List<String> existingTokens = product.getProductToken().stream()
+                .map(ProductSkuToken::getToken)
+                .sorted()
+                .toList();
+
+        if (existingTokens.equals(newTokens)) {
+            return;
+        }
+
+        productRepository.deleteProductSkuToken(product.getId());
+        List<ProductSkuToken> toSave = tokenDtos.stream()
+                .map(dto -> {
+                    ProductSkuToken e = dto.toEntity();
+                    e.setProduct(product);
+                    return e;
+                })
+                .toList();
+        productRepository.saveAllProductSkuToken(toSave);
     }
 }
