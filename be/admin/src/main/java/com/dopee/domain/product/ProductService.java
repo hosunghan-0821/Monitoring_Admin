@@ -58,7 +58,7 @@ public class ProductService {
         //Global Exception Handler로 처리 필요
         Product product = productRepository.findById(productDto.getId()).orElseThrow(() -> new RuntimeException("유효하지 않은 ID 입니다."));
 
-        product.update(productDto.getBoutique(), productDto.getBrand(), productDto.getSku(), productDto.getName(), productDto.getLink(), productDto.getImageSrc(),productDto.getPrice(),productDto.getCount());
+        product.update(productDto.getBoutique(), productDto.getBrand(), productDto.getSku(), productDto.getName(), productDto.getLink(), productDto.getImageSrc(), productDto.getPrice(), productDto.getCount());
 
         //전체 프러덕트 사이즈 전체 삭제 후 재 등록
         productRepository.deleteProductSize(productDto.getId());
@@ -144,4 +144,9 @@ public class ProductService {
     }
 
 
+    @Transactional(readOnly = true)
+    public List<ProductDto> getAllProducts() {
+        List<Product> allProductsInBatch = productRepository.findAllProductsInBatch();
+        return allProductsInBatch.stream().map(ProductDto::fromEntity).collect(Collectors.toList());
+    }
 }

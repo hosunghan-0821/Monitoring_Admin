@@ -20,10 +20,10 @@ public class ProductExcelParser extends AbstractExcelParser<ProductDto> {
     protected ProductDto mapRow(Row row) {
 
         // 1) 안전하게 원값 추출
-        String raw = getStringCell(row, 5);
-        String tokenRaw = getStringCell(row, 6);
+        String sizeRaw = getStringCell(row, ProductExcelColumn.PRODUCT_SIZES.getIndex());
+        String tokenRaw = getStringCell(row, ProductExcelColumn.PRODUCT_TOKENS.getIndex());
 
-        List<ProductSizeDto> sizes = Arrays.stream(raw.split(","))
+        List<ProductSizeDto> sizes = Arrays.stream(sizeRaw.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(v -> ProductSizeDto.builder().name(v).build())
@@ -38,11 +38,12 @@ public class ProductExcelParser extends AbstractExcelParser<ProductDto> {
                 .collect(Collectors.toList());
 
         return ProductDto.builder()
-                .boutique(row.getCell(0).getStringCellValue())
-                .brand(row.getCell(1).getStringCellValue())
-                .sku(row.getCell(2).getStringCellValue())
-                .price(row.getCell(3).getNumericCellValue())
-                .count((long) row.getCell(4).getNumericCellValue())
+                .id((long) row.getCell(ProductExcelColumn.DB_ID.getIndex(), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL).getNumericCellValue())
+                .boutique(getStringCell(row, ProductExcelColumn.BOUTIQUE.getIndex()))
+                .brand(getStringCell(row, ProductExcelColumn.BRAND.getIndex()))
+                .sku(getStringCell(row, ProductExcelColumn.SKU.getIndex()))
+                .price(row.getCell(ProductExcelColumn.PRICE.getIndex()).getNumericCellValue())
+                .count((long) row.getCell(ProductExcelColumn.COUNT.getIndex()).getNumericCellValue())
                 .productSizes(sizes)
                 .productSkuTokens(tokens)
                 .build();

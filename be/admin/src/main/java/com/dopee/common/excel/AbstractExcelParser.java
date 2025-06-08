@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractExcelParser<T> implements ExcelParser<T> {
 
-    private static final byte[] XLS_SIGNATURE = new byte[] {
+    private static final byte[] XLS_SIGNATURE = new byte[]{
             (byte) 0xD0, (byte) 0xCF, 0x11, (byte) 0xE0,
             (byte) 0xA1, (byte) 0xB1, 0x1A, (byte) 0xE1
     };
@@ -29,14 +29,16 @@ public abstract class AbstractExcelParser<T> implements ExcelParser<T> {
             Sheet sheet = wb.getSheetAt(0);
             List<T> result = new ArrayList<>();
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue;      // 헤더 스킵
+                if (row.getRowNum() == 0) {
+                    continue;
+                }       // 헤더 스킵
                 result.add(mapRow(row));
             }
             return result;
         }
     }
 
-    public boolean validateExcelSignature(MultipartFile file){
+    public boolean validateExcelSignature(MultipartFile file) {
 
         if (file == null || file.isEmpty()) {
             return false;
@@ -71,6 +73,9 @@ public abstract class AbstractExcelParser<T> implements ExcelParser<T> {
         }
         return false;
     }
-    /** 도메인별로 Row → DTO 변환 로직만 구현하게 한다 */
+
+    /**
+     * 도메인별로 Row → DTO 변환 로직만 구현하게 한다
+     */
     protected abstract T mapRow(Row row);
 }
